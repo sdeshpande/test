@@ -54,7 +54,7 @@ wipefs "${part_root}"
 
 mkfs.vfat -F32 "${part_boot}"
 mkswap "${part_swap}"
-mkfs.f2fs -f "${part_root}"
+mkfs.ext4 -f "${part_root}"
 
 swapon "${part_swap}"
 mount "${part_root}" /mnt
