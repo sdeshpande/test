@@ -67,8 +67,6 @@ pacstrap /mnt base base-devel
 genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
 echo "${hostname}" > /mnt/etc/hostname
 
-
-arch-chroot /mnt mount -t efivarfs efivarfs /sys/firmware/efi/efivars
 arch-chroot /mnt bootctl install
 
 cat <<EOF > /mnt/boot/loader/loader.conf
