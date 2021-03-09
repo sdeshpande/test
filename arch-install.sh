@@ -88,3 +88,6 @@ arch-chroot /mnt chsh -s /bin/bash
 
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
+
+arch-chroot /mnt pacman -Syu cowsay --noconfirm
+pacstrap /mnt ranger
