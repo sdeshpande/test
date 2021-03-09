@@ -81,12 +81,14 @@ initrd   /initramfs-linux.img
 options  root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw
 EOF
 
-arch-chroot /mnt locale-gen
-echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
-arch-chroot /mnt export LANG=en_US.UTF-8
-arch-chroot /mnt ln -s /usr/share/zoneinfo/America/New_York > /etc/localtime
-arch-chroot /mnt hwclock –systohc –utc
-arch-chroot /mnt mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+arch-chroot /mnt
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+export LANG=en_US.UTF-8
+ln -s /usr/share/zoneinfo/America/New_York > /etc/localtime
+hwclock –systohc –utc
+mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+exit
 
 arch-chroot /mnt useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
 #arch-chroot /mnt chsh -s /bin/bash
@@ -94,10 +96,12 @@ arch-chroot /mnt useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,game
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
-pacstrap /mnt plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm --noconfirm
-pacstrap /mnt network-manager-applet networkmanager bluez bluez-utils --noconfirm
-arch-chroot /mnt systemctl enable sddm.service
-arch-chroot /mnt systemctl enable NetworkManager.service
-arch-chroot /mnt systemctl enable bluetooth.service
-pacstrap /mnt bash-completion xf86-video-intel rsync firefox ttf-dejavu cifs-utils exfat-utils intel-ucode
-arch-chroot /mnt bootctl update
+arch-chroot /mnt
+pacman -Sy plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm --noconfirm
+pacman -Sy network-manager-applet networkmanager bluez bluez-utils --noconfirm
+systemctl enable sddm.service
+systemctl enable NetworkManager.service
+systemctl enable bluetooth.service
+pacman -Sy bash-completion xf86-video-intel rsync firefox ttf-dejavu cifs-utils exfat-utils intel-ucode
+bootctl update
+exit
