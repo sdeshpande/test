@@ -79,19 +79,19 @@ echo "${hostname}" > /mnt/etc/hostname
 
 if [ -d /sys/firmware/efi/efivars/ ]; then #install systemd-boot bootloader
 	arch-chroot /mnt bootctl install 
-	cat <<EOF > /mnt/boot/loader/loader.conf
-default	arch
-EOF 
+	cat <<EOF1 > /mnt/boot/loader/loader.conf
+  default	arch
+EOF1
 
 pacstrap /mnt intel-ucode
 
-cat <<EOF > /mnt/boot/loader/entries/arch.conf
+cat <<EOF2 > /mnt/boot/loader/entries/arch.conf
 title    Arch Linux
 linux    /vmlinuz-linux
 initrd   /intel-ucode.img
 initrd   /initramfs-linux.img
 options  root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw
-EOF
+EOF2
 
 else #install grub
   echo "install grub"
@@ -115,9 +115,9 @@ echo "root:$password" | chpasswd --root /mnt
 pacstrap /mnt plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm
 pacstrap /mnt network-manager-applet networkmanager bluez bluez-utils
 pacstrap /mnt bash-completion xf86-video-intel rsync firefox ttf-dejavu cifs-utils exfat-utils
-arch-chroot /mnt /bin/bash <<- EOF
+arch-chroot /mnt /bin/bash <<- EOF3
 systemctl enable sddm.service
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
-EOF
+EOF3
 arch-chroot /mnt bootctl update
