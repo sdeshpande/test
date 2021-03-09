@@ -65,13 +65,25 @@ mount "${part_boot}" /mnt/boot
 
 pacstrap /mnt base base-devel
 genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
+
+arch-chroot /mnt /bin/bash <<- EOF
+ln -s /usr/share/zoneinfo/America/New_York > /etc/localtime
+hwclock –systohc –utc
+sed -e 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' -i /etc/locale.gen
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+export LANG=en_US.UTF-8
+EOF
+
 echo "${hostname}" > /mnt/etc/hostname
 
-arch-chroot /mnt bootctl install
+if [ -d /sys/firmware/efi/efivars/ ]; then #install systemd-boot bootloader
+	arch-chroot /mnt bootctl install 
+	cat <<EOF > /mnt/boot/loader/loader.conf
+default	arch
+EOF 
 
-cat <<EOF > /mnt/boot/loader/loader.conf
-default arch
-EOF
+pacstrap /mnt intel-ucode
 
 cat <<EOF > /mnt/boot/loader/entries/arch.conf
 title    Arch Linux
@@ -81,25 +93,26 @@ initrd   /initramfs-linux.img
 options  root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw
 EOF
 
-arch-chroot /mnt /bin/bash && set -x
-locale-gen
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
-export LANG=en_US.UTF-8
-ln -s /usr/share/zoneinfo/America/New_York > /etc/localtime
-hwclock –systohc –utc
-useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
+else #install grub
+  echo "install grub"
+
+fi
+
+echo "root:$password" | arch-chroot /mnt chpasswd --root
+arch-chroot /mnt useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
+echo "$user:$password" | arch-chroot /mnt chpasswd --root
+
 #arch-chroot /mnt chsh -s /bin/bash
 
 # echo "$user:$password" | chpasswd --root /mnt
 # echo "root:$password" | chpasswd --root /mnt
 
-pacman -Sy plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm --noconfirm
-pacman -Sy network-manager-applet networkmanager bluez bluez-utils --noconfirm
+pacstrap /mnt plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm
+pacstrap /mnt network-manager-applet networkmanager bluez bluez-utils
+pacstrap /mnt bash-completion xf86-video-intel rsync firefox ttf-dejavu cifs-utils exfat-utils
+arch-chroot /mnt /bin/bash <<- EOF
 systemctl enable sddm.service
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
-pacman -Sy bash-completion xf86-video-intel rsync firefox ttf-dejavu cifs-utils exfat-utils intel-ucode
-bootctl update
-
-echo "$user:$password" | chpasswd --root
-echo "root:$password" | chpasswd --root
+EOF
+arch-chroot /mnt bootctl update
