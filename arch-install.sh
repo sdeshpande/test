@@ -98,9 +98,14 @@ else #install grub
 
 fi
 
-echo "root:$password" | arch-chroot /mnt chpasswd --root
 arch-chroot /mnt useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
-echo "$user:$password" | arch-chroot /mnt chpasswd --root
+
+#echo "$user:$password" | arch-chroot /mnt chpasswd --root
+echo "$user:$password" | chpasswd --root /mnt
+
+#echo "root:$password" | arch-chroot /mnt chpasswd --root
+echo "root:$password" | chpasswd --root /mnt
+
 
 #arch-chroot /mnt chsh -s /bin/bash
 
