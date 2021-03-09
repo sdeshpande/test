@@ -86,11 +86,11 @@ EOF1
 pacstrap /mnt intel-ucode
 
 cat <<EOF2 > /mnt/boot/loader/entries/arch.conf
-title    Arch Linux
-linux    /vmlinuz-linux
-initrd   /intel-ucode.img
-initrd   /initramfs-linux.img
-options  root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw
+title Arch Linux
+linux /vmlinuz-linux
+initrd /intel-ucode.img
+initrd /initramfs-linux.img
+options root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw
 EOF2
 
 else #install grub
