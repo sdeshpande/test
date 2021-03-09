@@ -81,22 +81,19 @@ initrd   /initramfs-linux.img
 options  root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw
 EOF
 
-arch-chroot /mnt
+arch-chroot /mnt /bin/bash && set -x
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 export LANG=en_US.UTF-8
 ln -s /usr/share/zoneinfo/America/New_York > /etc/localtime
 hwclock –systohc –utc
 mount -t efivarfs efivarfs /sys/firmware/efi/efivars
-exit
-
-arch-chroot /mnt useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
+useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
 #arch-chroot /mnt chsh -s /bin/bash
 
-echo "$user:$password" | chpasswd --root /mnt
-echo "root:$password" | chpasswd --root /mnt
+# echo "$user:$password" | chpasswd --root /mnt
+# echo "root:$password" | chpasswd --root /mnt
 
-arch-chroot /mnt
 pacman -Sy plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm --noconfirm
 pacman -Sy network-manager-applet networkmanager bluez bluez-utils --noconfirm
 systemctl enable sddm.service
@@ -104,4 +101,6 @@ systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
 pacman -Sy bash-completion xf86-video-intel rsync firefox ttf-dejavu cifs-utils exfat-utils intel-ucode
 bootctl update
-exit
+
+echo "$user:$password" | chpasswd --root
+echo "root:$password" | chpasswd --root
