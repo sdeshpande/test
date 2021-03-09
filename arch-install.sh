@@ -67,8 +67,6 @@ pacstrap /mnt base base-devel
 genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
 echo "${hostname}" > /mnt/etc/hostname
 
-arch-chroot /mnt bootctl install
-
 cat <<EOF > /mnt/boot/loader/loader.conf
 default arch
 EOF
@@ -90,6 +88,8 @@ hwclock –systohc –utc
 mount -t efivarfs efivarfs /sys/firmware/efi/efivars
 useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
 #arch-chroot /mnt chsh -s /bin/bash
+
+bootctl install
 
 # echo "$user:$password" | chpasswd --root /mnt
 # echo "root:$password" | chpasswd --root /mnt
