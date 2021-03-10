@@ -89,7 +89,7 @@ if [ -d /sys/firmware/efi/efivars/ ]; then #install systemd-boot bootloader
 EOF1
 
 pacstrap /mnt intel-ucode
-kon
+
 cat <<EOF2 > /mnt/boot/loader/entries/arch.conf
 title Arch Linux
 linux /vmlinuz-linux
