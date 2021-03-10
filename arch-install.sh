@@ -101,13 +101,14 @@ fi
 
 arch-chroot /mnt useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
 arch-chroot /mnt sed --in-place 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+ALL\)/\1/' /etc/sudoers
+arch-chroot /mnt sed -i 's/#\[multilib]/\[multilib]/' /etc/pacman.conf
+arch-chroot /mnt sed -i '/^#\[multilib]/{N;s/\n#/\n/}' /etc/pacman.conf
 
 #echo "$user:$password" | arch-chroot /mnt chpasswd --root
 echo "$user:$password" | chpasswd --root /mnt
 
 #echo "root:$password" | arch-chroot /mnt chpasswd --root
 echo "root:$password" | chpasswd --root /mnt
-
 
 #arch-chroot /mnt chsh -s /bin/bash
 
@@ -117,7 +118,9 @@ echo "root:$password" | chpasswd --root /mnt
 pacstrap /mnt plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm
 pacstrap /mnt network-manager-applet networkmanager bluez bluez-utils
 pacstrap /mnt bash-completion rsync firefox ttf-dejavu cifs-utils exfat-utils
-pacstrap /mnt firefox ranger remmina freerdp mpv
+pacstrap /mnt firefox ranger remmina freerdp mpv vscode nano vim irssi git pass
+pacstrap /mnt neofetch 
+pacstrap /mnt packagekit-qt5 fwupd
 # pacstrap /mnt xf86-video-intel
 arch-chroot /mnt /bin/bash <<- EOF3
 systemctl enable sddm.service
