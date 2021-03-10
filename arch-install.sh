@@ -61,6 +61,10 @@ mount "${part_root}" /mnt
 mkdir /mnt/boot
 mount "${part_boot}" /mnt/boot
 
+# Choose Desktop Environment
+available_desktop_environments="GNOME DE Plasma DE"
+selected_desktop_environment=$(dialog --stdout --menu "Select Desktop Environment" 0 0 0 ${available_desktop_environments}) || exit 1
+
 # ### Install and configure the basic system ###
 
 pacstrap /mnt base base-devel linux linux-firmware
@@ -85,7 +89,7 @@ if [ -d /sys/firmware/efi/efivars/ ]; then #install systemd-boot bootloader
 EOF1
 
 pacstrap /mnt intel-ucode
-
+kon
 cat <<EOF2 > /mnt/boot/loader/entries/arch.conf
 title Arch Linux
 linux /vmlinuz-linux
@@ -115,17 +119,29 @@ echo "root:$password" | chpasswd --root /mnt
 # echo "$user:$password" | chpasswd --root /mnt
 # echo "root:$password" | chpasswd --root /mnt
 
-pacstrap /mnt plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm
+if [[ "$selected_desktop_environment" == "Plasma" ]]; then
+  pacstrap /mnt plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm
+  arch-chroot /mnt /bin/bash <<- KDE
+  systemctl enable sddm.service
+KDE
+elif [[ "$selected_desktop_environment" == "GNOME" ]]; then
+  pacstrap /mnt gnome gnome-extra gdm gnome-software gnome-tweak-tool 
+  arch-chroot /mnt /bin/bash <<- GNOME
+  systemctl enable gdm.service
+GNOME
+else
+  echo "Choose de"
+fi
 pacstrap /mnt network-manager-applet networkmanager networkmanager-vpnc
 pacstrap /mnt bash-completion rsync firefox ttf-dejavu cifs-utils exfat-utils
 pacstrap /mnt firefox ranger remmina freerdp mpv vscode nano vim irssi git pass
-pacstrap /mnt neofetch bluez bluez-utils
+pacstrap /mnt neofetch bluez bluez-utils tlp powertop
 pacstrap /mnt packagekit-qt5 fwupd
 # pacstrap /mnt xf86-video-intel
 arch-chroot /mnt /bin/bash <<- EOF3
-systemctl enable sddm.service
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
+systemctl enable tlp.service
 EOF3
 arch-chroot /mnt bootctl update
 umount -R /mnt
