@@ -116,10 +116,10 @@ echo "root:$password" | chpasswd --root /mnt
 # echo "root:$password" | chpasswd --root /mnt
 
 pacstrap /mnt plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm
-pacstrap /mnt network-manager-applet networkmanager bluez bluez-utils
+pacstrap /mnt network-manager-applet networkmanager networkmanager-vpnc
 pacstrap /mnt bash-completion rsync firefox ttf-dejavu cifs-utils exfat-utils
 pacstrap /mnt firefox ranger remmina freerdp mpv vscode nano vim irssi git pass
-pacstrap /mnt neofetch 
+pacstrap /mnt neofetch bluez bluez-utils
 pacstrap /mnt packagekit-qt5 fwupd
 # pacstrap /mnt xf86-video-intel
 arch-chroot /mnt /bin/bash <<- EOF3
