@@ -63,8 +63,9 @@ mount "${part_boot}" /mnt/boot
 
 # ### Install and configure the basic system ###
 
-pacstrap /mnt base base-devel
-genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
+pacstrap /mnt base base-devel linux linux-firmware
+#genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
+genfstab -U /mnt >> /mnt/etc/fstab
 
 arch-chroot /mnt /bin/bash <<- EOF
 ln -s /usr/share/zoneinfo/America/New_York > /etc/localtime
@@ -121,3 +122,5 @@ systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
 EOF3
 arch-chroot /mnt bootctl update
+umount -R /mnt
+reboot
