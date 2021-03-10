@@ -102,7 +102,7 @@ fi
 arch-chroot /mnt useradd -mU -s /bin/bash -G wheel,uucp,video,audio,storage,games,input "$user"
 arch-chroot /mnt sed --in-place 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+ALL\)/\1/' /etc/sudoers
 arch-chroot /mnt sed -i 's/#\[multilib]/\[multilib]/' /etc/pacman.conf
-arch-chroot /mnt sed -i '/^#\[multilib]/{N;s/\n#/\n/}' /etc/pacman.conf
+arch-chroot /mnt sed -i '/^\[multilib]/{N;s/\n#/\n/}' /etc/pacman.conf
 
 #echo "$user:$password" | arch-chroot /mnt chpasswd --root
 echo "$user:$password" | chpasswd --root /mnt
