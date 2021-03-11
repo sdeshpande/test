@@ -62,10 +62,14 @@ mkdir /mnt/boot
 mount "${part_boot}" /mnt/boot
 
 # Choose Desktop Environment
-available_desktop_environments="GNOME DE Plasma DE"
+available_desktop_environments="GNOME DE Plasma DE XFCE DE"
 selected_desktop_environment=$(dialog --stdout --menu "Select Desktop Environment" 0 0 0 ${available_desktop_environments}) || exit 1
 
 # ### Install and configure the basic system ###
+
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
+reflector --verbose --country 'United States' -l 10 --sort rate --save /etc/pacman.d/mirrorlist
+
 
 pacstrap /mnt base base-devel linux linux-firmware
 #genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
@@ -131,6 +135,12 @@ elif [[ "$selected_desktop_environment" == "GNOME" ]]; then
   arch-chroot /mnt /bin/bash <<- GNOME
   systemctl enable gdm
 GNOME
+elif [[ "$selected_desktop_environment" == "XFCE" ]]; then
+  pacstrap /mnt xorg xorg-server xfce4 xfce4-goodies lightdm lightdm-gtk-greeter
+  sleep 2
+  arch-chroot /mnt /bin/bash <<- XFCE
+  systemctl enable lightdm
+XFCE
 else
   echo "Choose de"
 fi
