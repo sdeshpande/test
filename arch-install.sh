@@ -67,9 +67,8 @@ selected_desktop_environment=$(dialog --stdout --menu "Select Desktop Environmen
 
 # ### Install and configure the basic system ###
 
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
-reflector --verbose --country 'United States' -l 10 --sort rate --save /etc/pacman.d/mirrorlist
-
+# cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
+# reflector --verbose --country 'United States' -l 10 --sort rate --save /etc/pacman.d/mirrorlist
 
 pacstrap /mnt base base-devel linux linux-firmware
 #genfstab -t PARTUUID /mnt >> /mnt/etc/fstab
