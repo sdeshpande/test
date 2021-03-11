@@ -129,7 +129,7 @@ if [[ "$selected_desktop_environment" == "Plasma" ]]; then
   systemctl enable sddm
 KDE
 elif [[ "$selected_desktop_environment" == "GNOME" ]]; then
-  pacstrap /mnt xorg xorg-server gnome gnome-extra gdm gnome-software gnome-tweaks
+  pacstrap /mnt xorg xorg-server xorg-xinit dbus gnome gnome-extra gdm gnome-software gnome-tweaks
   sleep 2
   arch-chroot /mnt /bin/bash <<- GNOME
   systemctl enable gdm
