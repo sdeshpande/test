@@ -121,13 +121,15 @@ echo "root:$password" | chpasswd --root /mnt
 
 if [[ "$selected_desktop_environment" == "Plasma" ]]; then
   pacstrap /mnt plasma-meta kde-applications-meta kde-utilities sddm sddm-kcm
+  sleep 2
   arch-chroot /mnt /bin/bash <<- KDE
-  systemctl enable sddm.service
+  systemctl enable sddm
 KDE
 elif [[ "$selected_desktop_environment" == "GNOME" ]]; then
-  pacstrap /mnt gnome gnome-extra gdm gnome-software gnome-tweaks
+  pacstrap /mnt xorg xorg-server gnome gnome-extra gdm gnome-software gnome-tweaks
+  sleep 2
   arch-chroot /mnt /bin/bash <<- GNOME
-  systemctl enable gdm.service
+  systemctl enable gdm
 GNOME
 else
   echo "Choose de"
@@ -139,8 +141,8 @@ pacstrap /mnt neofetch bluez bluez-utils tlp powertop
 pacstrap /mnt packagekit-qt5 fwupd
 # pacstrap /mnt xf86-video-intel
 arch-chroot /mnt /bin/bash <<- EOF3
-systemctl enable NetworkManager.service
-systemctl enable bluetooth.service
+systemctl enable NetworkManager
+systemctl enable bluetooth
 EOF3
 arch-chroot /mnt bootctl update
 umount -R /mnt
