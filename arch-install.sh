@@ -141,7 +141,6 @@ pacstrap /mnt packagekit-qt5 fwupd
 arch-chroot /mnt /bin/bash <<- EOF3
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
-systemctl enable tlp.service
 EOF3
 arch-chroot /mnt bootctl update
 umount -R /mnt
